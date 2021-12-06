@@ -5,4 +5,4 @@
  
  Python Example: Some example python as references
  
- VBA Examples: 
+ VBA Examples: VBA Modules and Classes exported from Excel, to use, import into a macro enabled excel.
