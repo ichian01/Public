@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>4ee7e546-d790-4c76-8c21-e9b9f1e3eb5b</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>KaprekarCheck.py</StartupFile>
+    <StartupFile>LeetcodeArrays.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,6 +24,7 @@
     <Compile Include="KaprekarCheck.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LeetcodeArrays.py" />
     <Compile Include="PythonExamples.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
