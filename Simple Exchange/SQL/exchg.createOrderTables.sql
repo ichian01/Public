@@ -71,7 +71,10 @@ CREATE TABLE [exchg].[instrument]
 	CONSTRAINT PK_instrument PRIMARY KEY (instrument_pk),
 	CONSTRAINT UC_instrument_name UNIQUE ([instrument_name])
 )
-
+GO
+INSERT INTO [exchg].[instrument]([instrument_name])
+VALUES('USD')
+GO
 --update the order if it's canceled
 --else always insert
 CREATE TABLE [exchg].[order]
@@ -84,6 +87,7 @@ CREATE TABLE [exchg].[order]
 	is_bid BIT NOT NULL DEFAULT 0,--0 is offer, 1 is bid
 	quantity DECIMAL(38,12) NOT NULL,
 	price DECIMAL(38,12) NOT NULL,
+	price_currency_id BIGINT NOT NULL,--think of this as currency, and currency is just another instrument.  I could literally barter cars for catcoins.
 	is_GTC BIT NOT NULL DEFAULT 0,
 	is_canceled BIT NOT NULL DEFAULT 0, --just for easy state management
 	is_filled  BIT NOT NULL DEFAULT 0, 
@@ -92,7 +96,8 @@ CREATE TABLE [exchg].[order]
 	canceled_time DATETIME2 NULL,
 	CONSTRAINT PK_order PRIMARY KEY (order_pk),
 	CONSTRAINT FK_user FOREIGN KEY ([user_id]) REFERENCES [exchg].[user](user_pk),
-	CONSTRAINT FK_instrument FOREIGN KEY (instrument_id) REFERENCES [exchg].[instrument](instrument_pk)
+	CONSTRAINT FK_instrument FOREIGN KEY (instrument_id) REFERENCES [exchg].[instrument](instrument_pk),
+	CONSTRAINT FK_price_instrument FOREIGN KEY (price_currency_id) REFERENCES [exchg].[instrument](instrument_pk)
 )
 
 CREATE TABLE [exchg].[order_book]
