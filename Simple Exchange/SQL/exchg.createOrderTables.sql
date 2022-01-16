@@ -100,6 +100,7 @@ CREATE TABLE [exchg].[order]
 	CONSTRAINT FK_price_instrument FOREIGN KEY (price_currency_id) REFERENCES [exchg].[instrument](instrument_pk)
 )
 
+--Live Order Book
 CREATE TABLE [exchg].[order_book]
 (
 	order_id BIGINT NOT NULL,
