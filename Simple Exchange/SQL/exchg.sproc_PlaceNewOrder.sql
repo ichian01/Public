@@ -18,27 +18,39 @@ CREATE PROCEDURE exchg.sproc_PlaceNewOrder
 )
 AS
 BEGIN
+	SET NOCOUNT ON
+
+	SET XACT_ABORT ON --rollback transaction on any errors
+
 	BEGIN TRANSACTION
 		DECLARE @order_id bigint
-		
+		DECLARE @is_filled bit
+		SET @is_filled = 0
 		--First record the order
 		INSERT INTO [exchg].[order]([user_id],[instrument_id],is_market,is_bid,quantity,price,price_currency_id,is_GTC)
 		VALUES(@user_id,@instrument_id,@is_market,@is_bid,@quantity,@price,@price_currency_id,@is_GTC)
 		SELECT @order_id = SCOPE_IDENTITY()
 		
-		--Market order
-		--IF @is_market = 1
-		--BEGIN
+
+		--https://www.mssqltips.com/sqlservertip/6148/sql-server-loop-through-table-rows-without-cursor/
+
+		--Limit order
+		IF @is_market = 0
+		BEGIN
 			--Get List of orders where @quantity < sum(quantity)
-		--END
-		--ELSE --Limit Order
+					--If order_id is not there, then we
+			
+			PRINT 'AAAA'
+			EXEC exchg.sproc_FillLimitOrder @order_id
+		END
+		--ELSE --Market Order
 		--BEGIN
-		select * from exchg.order_book
+			--select * from exchg.order_book
+			--EXEC sproc_FillMarketOrder @quantity
 		--END
+
 		--update the outstanding order book
-		--If order_id is not there, then we 
-		INSERT INTO [exchg].[order_book](order_id,current_qty)
-		VALUES(@order_id,@quantity)
+
 	COMMIT
 END
 GO
