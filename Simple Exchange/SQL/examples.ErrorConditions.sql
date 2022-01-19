@@ -9,6 +9,7 @@ JOIN exchg.[order] s on b.instrument_id = s.instrument_id AND s.is_bid = 0
 JOIN exchg.[order_book] sb on s.order_pk = sb.order_id
 WHERE b.price >= s.price
 
+
 --Currenty Quantity should always be less than order quantity
 SELECT * FROM exchg.[order_book] ob join exchg.[order] o on ob.order_id = o.order_pk
 WHERE ob.current_qty > o.quantity

@@ -1,9 +1,9 @@
-IF EXISTS(SELECT 1  FROM sys.procedures p INNER JOIN sys.schemas s on p.[schema_id] = s.[schema_id] WHERE p.[name] like 'sproc_FillLimitOrder' and s.[name] like 'exchg' and p.type = 'P')
+IF EXISTS(SELECT 1  FROM sys.procedures p INNER JOIN sys.schemas s on p.[schema_id] = s.[schema_id] WHERE p.[name] like 'sproc_FillOrder' and s.[name] like 'exchg' and p.type = 'P')
 BEGIN
-	DROP PROCEDURE exchg.sproc_FillLimitOrder
+	DROP PROCEDURE exchg.sproc_FillOrder
 END
 GO
-CREATE PROCEDURE exchg.sproc_FillLimitOrder
+CREATE PROCEDURE exchg.sproc_FillOrder
 (
 	@taker_order_id BIGINT
 )
@@ -81,13 +81,8 @@ BEGIN
 			INSERT INTO exchg.order_fill(maker_order_id,taker_order_id,fill_quantity)
 			VALUES(@maker_order_id, @taker_order_id, @taker_quantity)
 
-			UPDATE exchg.[order]
-			SET is_filled = 1,
-				final_fill_time = SYSDATETIME()
-			WHERE order_pk = @taker_order_id
-
-			--If taker is filled, make sure to delete it from order_book
-			DELETE FROM exchg.[order_book] WHERE order_id = @taker_order_id
+			--Remove the taker from the book
+			exec exchg.sproc_SetOrderAsFilled @taker_order_id
 
 			--Update our live order book and decrease the maker's current quantity
 			UPDATE exchg.order_book
@@ -101,12 +96,8 @@ BEGIN
 			INSERT INTO exchg.order_fill(maker_order_id,taker_order_id,fill_quantity)
 			VALUES(@maker_order_id, @taker_order_id, @maker_quantity)
 			
-			UPDATE exchg.[order]
-				SET is_filled = 1,
-				final_fill_time = SYSDATETIME()
-			WHERE order_pk = @maker_order_id
-
-			DELETE exchg.order_book WHERE order_id = @maker_order_id
+			--Remove the maker from the book
+			exec exchg.sproc_SetOrderAsFilled @maker_order_id
 
 			--Use Recursion to fill if there's any left
 			IF @maker_quantity < @taker_quantity
@@ -124,7 +115,7 @@ BEGIN
 					WHERE order_id = @taker_order_id
 				END
 
-				EXEC exchg.sproc_FillLimitOrder @taker_order_id
+				EXEC exchg.sproc_FillOrder @taker_order_id
 			END
 		END
 	END
