@@ -14,8 +14,8 @@ from requests.api import get
 url="https://api-public.sandbox.exchange.coinbase.com/accounts"
 
 #normally would store the secret and key in a config file
-api_key = "f2e982dcb3161718a77c69ac13c3b5db"
-api_secret = "KAy6VJB2ANdSZ8x41dplRgQQBDXJkjv1wvtGSuKIPXVohCOSbe8p0kvT3+AS5phazgu6WdxVOyIAoz6I3MddZQ=="
+api_key = ""
+api_secret = ""
 print("URL: ",url)
 
 
